@@ -1,130 +1,547 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Loan AI 💰</title>
 
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg-1: #f4f7fb;
+            --bg-2: #e9eef8;
+            --surface: rgba(255, 255, 255, 0.88);
+            --surface-strong: #ffffff;
+            --text: #14213d;
+            --muted: #667085;
+            --border: rgba(20, 33, 61, 0.12);
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #0f9d58;
+            --danger: #dc2626;
+            --shadow: 0 20px 50px rgba(37, 99, 235, 0.12);
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            text-align: center;
-            color: white;
+            min-height: 100vh;
+            font-family: 'Satoshi', 'Segoe UI', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.14), transparent 28%),
+                linear-gradient(160deg, var(--bg-1), var(--bg-2));
+            padding: 24px;
+        }
+
+        .app-shell {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 1.3fr;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .hero-panel,
+        .container {
+            background: var(--surface);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: var(--shadow);
+        }
+
+        .hero-panel {
+            border-radius: 28px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100%;
+            text-align: left;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            width: fit-content;
+            margin-bottom: 18px;
+        }
+
+        .hero-panel h1 {
+            margin: 0 0 12px;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-panel p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            max-width: 54ch;
+        }
+
+        .hero-points {
+            margin-top: 28px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .point-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        .point-card strong {
+            display: block;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+        }
+
+        .point-card span {
+            color: var(--muted);
+            font-size: 0.92rem;
         }
 
         .container {
-            background: white;
-            color: black;
-            padding: 25px;
-            margin: 40px auto;
-            width: 420px;
-            border-radius: 15px;
-            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+            color: var(--text);
+            width: 100%;
+            border-radius: 28px;
+            padding: 28px;
+            margin: 0;
+            text-align: left;
         }
 
-        h2 {
-            margin-bottom: 15px;
+        .form-header {
+            margin-bottom: 22px;
+        }
+
+        .form-header h2 {
+            margin: 0 0 8px;
+            font-size: clamp(1.35rem, 2vw, 1.8rem);
+            line-height: 1.2;
+        }
+
+        .form-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.98rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
         }
 
         input, select {
-            width: 92%;
-            padding: 10px;
-            margin: 6px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--surface-strong);
+            color: var(--text);
+            outline: none;
+            font-size: 0.98rem;
+            transition: 0.2s ease;
+            appearance: none;
+        }
+
+        input::placeholder {
+            color: #98a2b3;
+        }
+
+        input:focus, select:focus {
+            border-color: rgba(37, 99, 235, 0.55);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .section-title {
+            margin: 24px 0 12px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
 
         button {
-            padding: 12px 20px;
-            background: #667eea;
+            margin-top: 22px;
+            min-height: 54px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 6px;
-            width: 95%;
-            font-size: 16px;
+            border-radius: 14px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
         }
 
         button:hover {
-            background: #5a67d8;
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--primary-hover), #4338ca);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            margin-top: 18px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            background: rgba(37, 99, 235, 0.06);
+            border: 1px solid rgba(37, 99, 235, 0.12);
         }
 
         #result {
-            margin-top: 15px;
-            font-size: 18px;
-            font-weight: bold;
+            margin: 0 0 6px;
+            font-size: 1.05rem;
+            font-weight: 800;
         }
 
         #reason {
-            font-size: 14px;
-            color: #555;
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        .hero-panel {
+    border-radius: 28px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    text-align: left;
+    gap: 22px;
+}
+
+.hero-benefit-box {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(20, 33, 61, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.hero-benefit-box h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+    color: var(--text);
+}
+
+.hero-benefit-box p {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 0.96rem;
+    line-height: 1.7;
+}
+
+.benefit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.benefit-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.benefit-list li span {
+    color: var(--primary);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+@media (max-width: 640px) {
+    .hero-benefit-box {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .hero-benefit-box h3 {
+        font-size: 1.05rem;
+    }
+
+    .benefit-list li {
+        font-size: 0.92rem;
+    }
+}
+
+        @media (max-width: 980px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-panel {
+                padding: 26px;
+            }
+
+            .hero-points {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 14px;
+            }
+
+            .container,
+            .hero-panel {
+                padding: 20px;
+                border-radius: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .hero-panel h1 {
+                font-size: 2rem;
+            }
+
+            .form-header h2 {
+                font-size: 1.35rem;
+            }
+
+            input, select, button {
+                min-height: 50px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 
 <body>
+    <div class="app-shell">
+        <div class="hero">
+            <section class="hero-panel">
+    <div>
+        <div class="eyebrow">💰 Smart lending assistant</div>
+        <h1>Loan Approval Predictor</h1>
+        <p>
+            Enter applicant and loan details to get an instant prediction with confidence
+            and a simple explanation, all in one clean dashboard.
+        </p>
+    </div>
 
-<div class="container">
-    <h2>Loan Approval Predictor 💰</h2>
+    <div class="hero-benefit-box">
+        <h3>Why this app helps</h3>
+        <p>
+            This predictor gives you a quick first-level loan assessment before manual review.
+            It helps users understand whether their profile looks strong, what factors matter,
+            and why a result may be approved or rejected.
+        </p>
 
-    <!-- INPUTS -->
-    <input id="age" placeholder="Age">
-    <input id="income" placeholder="Income">
-    <input id="emp_exp" placeholder="Employment Experience (years)">
-    <input id="loan_amount" placeholder="Loan Amount">
+        <ul class="benefit-list">
+            <li><span>✓</span> Instant prediction based on entered profile data</li>
+            <li><span>✓</span> Confidence score for clearer decision support</li>
+            <li><span>✓</span> Reason output to explain the result simply</li>
+            <li><span>✓</span> Better form flow for faster data entry</li>
+        </ul>
+    </div>
 
-    <!-- 🔥 EMI -->
-    <input id="previous_emi" placeholder="Existing EMI (monthly)">
+    <div class="hero-points">
+        <div class="point-card">
+            <strong>Fast input</strong>
+            <span>Clear field groups and easier scanning.</span>
+        </div>
+        <div class="point-card">
+            <strong>Responsive</strong>
+            <span>Works smoothly across desktop, tablet, and phone.</span>
+        </div>
+        <div class="point-card">
+            <strong>Same logic</strong>
+            <span>No backend or function changes made.</span>
+        </div>
+    </div>
+</section>
 
-    <input id="interest" placeholder="Interest Rate">
-    <input id="credit_hist" placeholder="Credit History Length">
-    <input id="credit_score" placeholder="Credit Score">
+            <div class="container">
+                <div class="form-header">
+                    <h2>Applicant details</h2>
+                    <p>Fill in the required fields below to predict whether the loan is likely to be approved.</p>
+                </div>
 
-    <!-- DROPDOWNS -->
-    <select id="gender">
-        <option>male</option>
-        <option>female</option>
-    </select>
+                <div class="section-title">Personal info</div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="age">Age</label>
+                        <input id="age" type="number" placeholder="Enter age">
+                    </div>
 
-    <select id="education">
-        <option>High School</option>
-        <option>Bachelor</option>
-        <option>Master</option>
-        <option>Associate</option>
-    </select>
+                    <div class="field">
+                        <label for="gender">Gender</label>
+                        <select id="gender">
+                            <option>male</option>
+                            <option>female</option>
+                        </select>
+                    </div>
 
-    <select id="home">
-        <option>RENT</option>
-        <option>OWN</option>
-        <option>MORTGAGE</option>
-    </select>
+                    <div class="field">
+                        <label for="education">Education</label>
+                        <select id="education">
+                            <option>High School</option>
+                            <option>Bachelor</option>
+                            <option>Master</option>
+                            <option>Associate</option>
+                        </select>
+                    </div>
 
-    <select id="intent">
-        <option>PERSONAL</option>
-        <option>EDUCATION</option>
-        <option>MEDICAL</option>
-        <option>VENTURE</option>
-        <option>HOMEIMPROVEMENT</option>
-    </select>
+                    <div class="field">
+                        <label for="emp_exp">Employment Experience (years)</label>
+                        <input id="emp_exp" type="number" placeholder="e.g. 4">
+                    </div>
 
-    <select id="default">
-        <option>No</option>
-        <option>Yes</option>
-    </select>
+                    <div class="field full">
+                        <label for="home">Home Ownership</label>
+                        <select id="home">
+                            <option>RENT</option>
+                            <option>OWN</option>
+                            <option>MORTGAGE</option>
+                        </select>
+                    </div>
+                </div>
 
-    <button onclick="predict()">Predict</button>
+                <div class="section-title">Financial details</div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="income">Income</label>
+                        <input id="income" type="number" placeholder="Enter annual income">
+                    </div>
 
-    <h3 id="result"></h3>
-    <p id="reason"></p>
-</div>
+                    <div class="field">
+                        <label for="loan_amount">Loan Amount</label>
+                        <input id="loan_amount" type="number" placeholder="Enter loan amount">
+                    </div>
+
+                    <div class="field">
+                        <label for="previous_emi">Existing EMI (monthly)</label>
+                        <input id="previous_emi" type="number" placeholder="Enter EMI or 0">
+                    </div>
+
+                    <div class="field">
+                        <label for="interest">Interest Rate</label>
+                        <input id="interest" type="number" step="0.01" placeholder="e.g. 12.5">
+                    </div>
+
+                    <div class="field">
+                        <label for="intent">Loan Intent</label>
+                        <select id="intent">
+                            <option>PERSONAL</option>
+                            <option>EDUCATION</option>
+                            <option>MEDICAL</option>
+                            <option>VENTURE</option>
+                            <option>HOMEIMPROVEMENT</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="default">Previous Loan Default</label>
+                        <select id="default">
+                            <option>No</option>
+                            <option>Yes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-title">Credit profile</div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="credit_hist">Credit History Length</label>
+                        <input id="credit_hist" type="number" placeholder="Years of credit history">
+                    </div>
+
+                    <div class="field">
+                        <label for="credit_score">Credit Score</label>
+                        <input id="credit_score" type="number" step="0.01" placeholder="Enter credit score">
+                    </div>
+                </div>
+
+                <button onclick="predict()">Predict Loan Approval</button>
+
+                <div class="result-box">
+                    <h3 id="result"></h3>
+                    <p id="reason"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script>
 async function predict() {
 
+
     const income = parseFloat(document.getElementById("income").value);
     const loan = parseFloat(document.getElementById("loan_amount").value);
 
+
     // 🔥 AUTO CALCULATE
     const loan_percent = loan / income;
+
 
     const data = {
         person_age: parseInt(document.getElementById("age").value),
@@ -143,6 +560,7 @@ async function predict() {
         previous_emi: parseFloat(document.getElementById("previous_emi").value || 0)
     };
 
+
     try {
         const response = await fetch("/predict", {
             method: "POST",
@@ -150,14 +568,18 @@ async function predict() {
             body: JSON.stringify(data)
         });
 
+
         const result = await response.json();
+
 
         document.getElementById("result").innerText =
             (result.prediction === "Approved" ? "✅ Approved" : "❌ Rejected") +
             " (" + result.confidence + "%)";
 
+
         document.getElementById("reason").innerText =
             "Reason: " + result.reason;
+
 
     } catch (error) {
         document.getElementById("result").innerText =
