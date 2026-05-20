@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loan AI 💰</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            text-align: center;
+            color: white;
+        }
+
+        .container {
+            background: white;
+            color: black;
+            padding: 25px;
+            margin: 40px auto;
+            width: 420px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            width: 92%;
+            padding: 10px;
+            margin: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 95%;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #reason {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Loan Approval Predictor 💰</h2>
+
+    <!-- INPUTS -->
+    <input id="age" placeholder="Age">
+    <input id="income" placeholder="Income">
+    <input id="emp_exp" placeholder="Employment Experience (years)">
+    <input id="loan_amount" placeholder="Loan Amount">
+
+    <!-- 🔥 EMI -->
+    <input id="previous_emi" placeholder="Existing EMI (monthly)">
+
+    <input id="interest" placeholder="Interest Rate">
+    <input id="credit_hist" placeholder="Credit History Length">
+    <input id="credit_score" placeholder="Credit Score">
+
+    <!-- DROPDOWNS -->
+    <select id="gender">
+        <option>male</option>
+        <option>female</option>
+    </select>
+
+    <select id="education">
+        <option>High School</option>
+        <option>Bachelor</option>
+        <option>Master</option>
+        <option>Associate</option>
+    </select>
+
+    <select id="home">
+        <option>RENT</option>
+        <option>OWN</option>
+        <option>MORTGAGE</option>
+    </select>
+
+    <select id="intent">
+        <option>PERSONAL</option>
+        <option>EDUCATION</option>
+        <option>MEDICAL</option>
+        <option>VENTURE</option>
+        <option>HOMEIMPROVEMENT</option>
+    </select>
+
+    <select id="default">
+        <option>No</option>
+        <option>Yes</option>
+    </select>
+
+    <button onclick="predict()">Predict</button>
+
+    <h3 id="result"></h3>
+    <p id="reason"></p>
+</div>
+
+<script>
+async function predict() {
+
+    const income = parseFloat(document.getElementById("income").value);
+    const loan = parseFloat(document.getElementById("loan_amount").value);
+
+    // 🔥 AUTO CALCULATE
+    const loan_percent = loan / income;
+
+    const data = {
+        person_age: parseInt(document.getElementById("age").value),
+        person_gender: document.getElementById("gender").value,
+        person_education: document.getElementById("education").value,
+        person_income: income,
+        person_emp_exp: parseInt(document.getElementById("emp_exp").value),
+        person_home_ownership: document.getElementById("home").value,
+        loan_amnt: loan,
+        loan_intent: document.getElementById("intent").value,
+        loan_int_rate: parseFloat(document.getElementById("interest").value),
+        loan_percent_income: loan_percent,
+        cb_person_cred_hist_length: parseInt(document.getElementById("credit_hist").value),
+        credit_score: parseFloat(document.getElementById("credit_score").value),
+        previous_loan_defaults_on_file: document.getElementById("default").value,
+        previous_emi: parseFloat(document.getElementById("previous_emi").value || 0)
+    };
+
+    try {
+        const response = await fetch("/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        document.getElementById("result").innerText =
+            (result.prediction === "Approved" ? "✅ Approved" : "❌ Rejected") +
+            " (" + result.confidence + "%)";
+
+        document.getElementById("reason").innerText =
+            "Reason: " + result.reason;
+
+    } catch (error) {
+        document.getElementById("result").innerText =
+            "Server Error ❌";
+    }
+}
+</script>
+
+</body>
+</html>
